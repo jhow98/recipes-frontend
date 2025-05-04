@@ -6,7 +6,7 @@ import router from '@/router'
 
 const api = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
-  timeout: 10000
+  timeout: 10000,
 })
 
 const getAuthHeader = (): RawAxiosRequestHeaders => {
@@ -14,15 +14,18 @@ const getAuthHeader = (): RawAxiosRequestHeaders => {
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
-api.interceptors.request.use(config => {
-  const headers = new AxiosHeaders(config.headers)
-  const authHeaders = getAuthHeader()
-  for (const [key, value] of Object.entries(authHeaders)) {
-    headers.set(key, value)
-  }
-  config.headers = headers
-  return config
-}, error => Promise.reject(error))
+api.interceptors.request.use(
+  config => {
+    const headers = new AxiosHeaders(config.headers)
+    const authHeaders = getAuthHeader()
+    for (const [key, value] of Object.entries(authHeaders)) {
+      headers.set(key, value)
+    }
+    config.headers = headers
+    return config
+  },
+  error => Promise.reject(error)
+)
 
 api.interceptors.response.use(
   response => response,

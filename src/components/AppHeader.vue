@@ -1,25 +1,30 @@
 <template>
   <header class="header">
-    <h1 class="title">
-      Receitas App
-    </h1>
+    <h1 class="title">Receitas App</h1>
     <nav class="nav">
-      <RouterLink v-if="!auth.isLoggedIn" to="/register" :class="{ active: route.path === '/register' }">
+      <RouterLink
+        v-if="!auth.isLoggedIn"
+        to="/register"
+        :class="{ active: route.path === '/register' }"
+      >
         Cadastrar Usuário
       </RouterLink>
-      <button v-if="!auth.isLoggedIn" @click="router.push('/login')">
-        Login
-      </button>
-      <RouterLink v-if="auth.isLoggedIn" to="/receitas"
-        :class="{ active: route.path.startsWith('/receitas') && !route.path.includes('criar') }">
+      <button v-if="!auth.isLoggedIn" @click="router.push('/login')">Login</button>
+      <RouterLink
+        v-if="auth.isLoggedIn"
+        to="/receitas"
+        :class="{ active: route.path.startsWith('/receitas') && !route.path.includes('criar') }"
+      >
         Minhas Receitas
       </RouterLink>
-      <RouterLink v-if="auth.isLoggedIn" to="/receitas/criar" :class="{ active: route.path === '/receitas/criar' }">
+      <RouterLink
+        v-if="auth.isLoggedIn"
+        to="/receitas/criar"
+        :class="{ active: route.path === '/receitas/criar' }"
+      >
         Nova Receita
       </RouterLink>
-      <button v-if="auth.isLoggedIn" @click="logout">
-        Logout
-      </button>
+      <button v-if="auth.isLoggedIn" @click="logout">Logout</button>
     </nav>
   </header>
 </template>

@@ -24,14 +24,13 @@ const routes = [
     component: RecipesPage,
     meta: { requiresAuth: true },
   },
-  
 
   {
     path: '/receitas/criar',
     component: CreateRecipePage,
     meta: { requiresAuth: true },
   },
-  { path: '/receitas/:id',     component: RecipeDetailPage, meta: { requiresAuth: true } },
+  { path: '/receitas/:id', component: RecipeDetailPage, meta: { requiresAuth: true } },
   {
     path: '/receitas/:id/editar',
     component: EditRecipePage,

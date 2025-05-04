@@ -6,12 +6,22 @@
 
       <form @submit.prevent="handleRegister">
         <BaseInput id="login" v-model="login" type="text" label="Login" placeholder="novo.login" />
-        <BaseInput id="password" v-model="password" type="password" label="Senha" placeholder="••••••••" />
-        <BaseInput id="name" v-model="name" type="text" label="Nome completo" placeholder="Seu nome" />
+        <BaseInput
+          id="password"
+          v-model="password"
+          type="password"
+          label="Senha"
+          placeholder="••••••••"
+        />
+        <BaseInput
+          id="name"
+          v-model="name"
+          type="text"
+          label="Nome completo"
+          placeholder="Seu nome"
+        />
 
-        <BaseButton type="submit">
-          Cadastrar
-        </BaseButton>
+        <BaseButton type="submit"> Cadastrar </BaseButton>
 
         <p v-if="message" class="success">
           {{ message }}
@@ -31,7 +41,7 @@ import axios from 'axios'
 import api from '@/services/api'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import AppHeader from '@/components/AppHeader.vue';
+import AppHeader from '@/components/AppHeader.vue'
 
 const login = ref('')
 const password = ref('')
@@ -69,21 +79,18 @@ const handleRegister = async () => {
 
     message.value = 'Usuário cadastrado com sucesso!'
     setTimeout(() => router.push('/login'), 1000)
-  }
-  catch (err: unknown) {
+  } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
       const status = err.response?.status
       if (status === 400) {
         error.value = 'Verifique os dados preenchidos.'
-      }
-      else if (status === 500) {
+      } else if (status === 500) {
         error.value = 'Erro interno do servidor.'
+      } else {
+        error.value =
+          'Ops! Nosso servidor está acordando agora — aguarde 1 minutinho e tente de novo. 🍃'
       }
-      else {
-        error.value = 'Ops! Nosso servidor está acordando agora — aguarde 1 minutinho e tente de novo. 🍃'
-      }
-    }
-    else {
+    } else {
       error.value = 'Erro inesperado.'
     }
   }

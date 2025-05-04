@@ -1,18 +1,23 @@
 <template>
   <div class="auth-input">
     <label :for="id">{{ label }}</label>
-    <input :id="id" :type="type" :placeholder="placeholder" :value="modelValue"
-      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)">
+    <input
+      :id="id"
+      :type="type"
+      :placeholder="placeholder"
+      :value="modelValue"
+      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 defineProps<{
-  label: string;
-  id: string;
-  type?: string;
-  modelValue: string;
-  placeholder?: string;
+  label: string
+  id: string
+  type?: string
+  modelValue: string
+  placeholder?: string
 }>()
 
 defineEmits(['update:modelValue'])

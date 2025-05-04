@@ -1,45 +1,69 @@
 <template>
   <form @submit.prevent="handleSubmit" novalidate>
-    <BaseInput id="name" label="Nome da Receita" type="text" v-model="form.name" placeholder="Ex: Arroz Carreteiro" />
+    <BaseInput
+      id="name"
+      label="Nome da Receita"
+      type="text"
+      v-model="form.name"
+      placeholder="Ex: Arroz Carreteiro"
+    />
     <p v-if="errors.name" class="error">
       {{ errors.name }}
     </p>
 
     <div class="two-columns">
       <div class="col">
-        <BaseInput id="preparation_time_minutes" label="Tempo de preparo (min)" type="number"
-          v-model.number="form.preparation_time_minutes" placeholder="Ex: 30" />
+        <BaseInput
+          id="preparation_time_minutes"
+          label="Tempo de preparo (min)"
+          type="number"
+          v-model.number="form.preparation_time_minutes"
+          placeholder="Ex: 30"
+        />
         <p v-if="errors.preparation_time_minutes" class="error">
           {{ errors.preparation_time_minutes }}
         </p>
       </div>
       <div class="col">
-        <BaseInput id="servings" label="Porções" type="number" v-model.number="form.servings" placeholder="Ex: 4" />
+        <BaseInput
+          id="servings"
+          label="Porções"
+          type="number"
+          v-model.number="form.servings"
+          placeholder="Ex: 4"
+        />
         <p v-if="errors.servings" class="error">
           {{ errors.servings }}
         </p>
       </div>
     </div>
 
-    <BaseInput id="ingredients" label="Ingredientes" type="text" v-model="form.ingredients"
-      placeholder="Ex: arroz, carne, temperos" />
+    <BaseInput
+      id="ingredients"
+      label="Ingredientes"
+      type="text"
+      v-model="form.ingredients"
+      placeholder="Ex: arroz, carne, temperos"
+    />
     <p v-if="errors.ingredients" class="error">
       {{ errors.ingredients }}
     </p>
 
     <div class="textarea-wrapper">
       <label for="preparation_method">Modo de preparo</label>
-      <textarea id="preparation_method" v-model="form.preparation_method" placeholder="Descreva o modo de preparo"
-        rows="6" />
+      <textarea
+        id="preparation_method"
+        v-model="form.preparation_method"
+        placeholder="Descreva o modo de preparo"
+        rows="6"
+      />
     </div>
     <p v-if="errors.preparation_method" class="error">
       {{ errors.preparation_method }}
     </p>
 
     <select v-model.number="form.categoryId" class="select-input">
-      <option value="">
-        Selecione uma categoria
-      </option>
+      <option value="">Selecione uma categoria</option>
       <option v-for="cat in categories" :key="cat.id" :value="cat.id">
         {{ cat.name }}
       </option>
@@ -55,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, defineEmits } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import api from '@/services/api'
@@ -90,12 +114,8 @@ function validate() {
   if (!form.value.name?.trim()) {
     errors.value.name = 'O nome é obrigatório.'
   }
-  if (
-    form.value.preparation_time_minutes == null ||
-    form.value.preparation_time_minutes < 1
-  ) {
-    errors.value.preparation_time_minutes =
-      'O tempo de preparo deve ser de no mínimo 1 minuto.'
+  if (form.value.preparation_time_minutes == null || form.value.preparation_time_minutes < 1) {
+    errors.value.preparation_time_minutes = 'O tempo de preparo deve ser de no mínimo 1 minuto.'
   }
   if (form.value.servings == null || form.value.servings < 1) {
     errors.value.servings = 'Deve ter pelo menos 1 porção.'
@@ -145,7 +165,6 @@ function handleSubmit() {
 .error {
   color: #d9534f;
   font-size: 0.875rem;
-
 }
 
 .select-input {

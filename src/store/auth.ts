@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import {jwtDecode} from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode'
 import type { JwtPayload } from '@/types/jwt-payload'
 
 export const useAuthStore = defineStore('auth', {
@@ -20,8 +20,9 @@ export const useAuthStore = defineStore('auth', {
   },
   getters: {
     isLoggedIn: state => !!state.token,
-    userId:    state => state.payload?.sub ?? null,
+    userId: state => state.payload?.sub ?? null,
   },
+
   actions: {
     setToken(token: string) {
       this.token = token
@@ -36,6 +37,6 @@ export const useAuthStore = defineStore('auth', {
       this.token = null
       this.payload = null
       localStorage.removeItem('token')
-    }
-  }
+    },
+  },
 })

@@ -7,13 +7,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import RecipeForm from '@/components/RecipeForm.vue';
-import AppHeader from '@/components/AppHeader.vue';
-import api from '@/services/api';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import RecipeForm from '@/components/RecipeForm.vue'
+import AppHeader from '@/components/AppHeader.vue'
+import api from '@/services/api'
 
-const router = useRouter();
+const router = useRouter()
 
 const recipe = ref({
   name: '',
@@ -21,13 +21,13 @@ const recipe = ref({
   servings: 0,
   preparation_method: '',
   ingredients: '',
-  categoryId: ''
-});
+  categoryId: '',
+})
 
 const handleCreate = async (data: any) => {
-  await api.post('/recipes', data);
-  router.push('/receitas');
-};
+  await api.post('/recipes', data)
+  router.push('/receitas')
+}
 </script>
 
 <style scoped>

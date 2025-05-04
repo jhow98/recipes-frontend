@@ -5,53 +5,55 @@
       <h2>Login</h2>
       <form @submit.prevent="handleLogin">
         <BaseInput id="login" label="Login" type="text" v-model="login" placeholder="login" />
-        <BaseInput id="password" label="Senha" type="password" v-model="password" placeholder="••••••••" />
-        <BaseButton type="submit">
-          Entrar
-        </BaseButton>
+        <BaseInput
+          id="password"
+          label="Senha"
+          type="password"
+          v-model="password"
+          placeholder="••••••••"
+        />
+        <BaseButton type="submit"> Entrar </BaseButton>
         <p v-if="error" class="error">
           {{ error }}
         </p>
       </form>
       <p class="register-link">
         Não tem uma conta?
-        <router-link to="/register">
-          Cadastre‑se
-        </router-link>
+        <router-link to="/register"> Cadastre‑se </router-link>
       </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/store/auth';
-import api from '@/services/api';
-import BaseInput from '@/components/BaseInput.vue';
-import BaseButton from '@/components/BaseButton.vue';
-import AppHeader from '@/components/AppHeader.vue';
-import axios from 'axios';
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/store/auth'
+import api from '@/services/api'
+import BaseInput from '@/components/BaseInput.vue'
+import BaseButton from '@/components/BaseButton.vue'
+import AppHeader from '@/components/AppHeader.vue'
+import axios from 'axios'
 
-const login = ref('');
-const password = ref('');
-const error = ref('');
+const login = ref('')
+const password = ref('')
+const error = ref('')
 
-const auth = useAuthStore();
-const router = useRouter();
+const auth = useAuthStore()
+const router = useRouter()
 
 onMounted(() => {
   if (auth.token) {
-    router.push('/receitas');
+    router.push('/receitas')
   }
-});
+})
 
 const handleLogin = async () => {
-  error.value = '';
+  error.value = ''
 
   if (!login.value || !password.value) {
-    error.value = 'Preencha todos os campos.';
-    return;
+    error.value = 'Preencha todos os campos.'
+    return
   }
 
   try {
@@ -62,28 +64,23 @@ const handleLogin = async () => {
     auth.setToken(response.data.access_token)
     router.push('/receitas')
   } catch (e: unknown) {
-
     if (axios.isAxiosError(e)) {
       const status = e.response?.status
 
       if (status === 400) {
         error.value = 'Preencha corretamente os dados.'
-      }
-      else if (status === 401) {
+      } else if (status === 401) {
         error.value = 'Credenciais inválidas.'
-      }
-      else if (status === 500) {
+      } else if (status === 500) {
         error.value = 'Erro interno do servidor.'
-      }
-      else {
+      } else {
         error.value = 'Servidor acordando… aguarde um minuto e tente novamente.'
       }
-    }
-    else {
+    } else {
       error.value = 'Ocorreu um erro inesperado.'
     }
   }
-};
+}
 </script>
 
 <style scoped>

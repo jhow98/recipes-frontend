@@ -42,62 +42,62 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import ConfirmDeleteModal from '@/components/ConfirmDeleteModal.vue';
-import AppHeader from '@/components/AppHeader.vue';
-import api from '@/services/api';
-import { Eye, Pencil, Trash2, Printer } from 'lucide-vue-next';
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import ConfirmDeleteModal from '@/components/ConfirmDeleteModal.vue'
+import AppHeader from '@/components/AppHeader.vue'
+import api from '@/services/api'
+import { Eye, Pencil, Trash2, Printer } from 'lucide-vue-next'
 
 interface Recipe {
-  id: number;
-  name: string;
-  preparation_time_minutes: number;
-  servings: number;
+  id: number
+  name: string
+  preparation_time_minutes: number
+  servings: number
 }
 
-const recipes = ref<Recipe[]>([]);
+const recipes = ref<Recipe[]>([])
 
-const showModal = ref(false);
-const recipeIdToDelete = ref<number | null>(null);
-const router = useRouter();
+const showModal = ref(false)
+const recipeIdToDelete = ref<number | null>(null)
+const router = useRouter()
 
 const fetchRecipes = async () => {
-  const { data } = await api.get<Recipe[]>('/recipes');
-  recipes.value = data;
-};
+  const { data } = await api.get<Recipe[]>('/recipes')
+  recipes.value = data
+}
 
-onMounted(fetchRecipes);
+onMounted(fetchRecipes)
 
 const viewRecipe = (id: number) => {
   router.push(`/receitas/${id}`)
 }
 
-const editRecipe = (id: number) => router.push(`/receitas/${id}/editar`);
+const editRecipe = (id: number) => router.push(`/receitas/${id}/editar`)
 
 const confirmDelete = (id: number) => {
-  recipeIdToDelete.value = id;
-  showModal.value = true;
-};
+  recipeIdToDelete.value = id
+  showModal.value = true
+}
 
 const deleteRecipe = async () => {
-  if (!recipeIdToDelete.value) return;
-  await api.delete(`/recipes/${recipeIdToDelete.value}`);
-  showModal.value = false;
-  recipeIdToDelete.value = null;
-  await fetchRecipes();
-};
+  if (!recipeIdToDelete.value) return
+  await api.delete(`/recipes/${recipeIdToDelete.value}`)
+  showModal.value = false
+  recipeIdToDelete.value = null
+  await fetchRecipes()
+}
 
 const printRecipe = async (id: number, name: string) => {
   const response = await api.get(`/recipes/${id}/print`, {
     responseType: 'blob',
-  });
-  const blob = new Blob([response.data], { type: 'application/pdf' });
-  const link = document.createElement('a');
-  link.href = window.URL.createObjectURL(blob);
-  link.download = `ReceitasApp - ${name}.pdf`;
-  link.click();
-};
+  })
+  const blob = new Blob([response.data], { type: 'application/pdf' })
+  const link = document.createElement('a')
+  link.href = window.URL.createObjectURL(blob)
+  link.download = `ReceitasApp - ${name}.pdf`
+  link.click()
+}
 </script>
 
 <style scoped>
