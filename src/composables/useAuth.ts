@@ -1,38 +1,26 @@
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/store/auth'
 import api from '@/services/api'
 import axios from 'axios'
 
-const token = ref<string | null>(localStorage.getItem('token'))
-
 export function useAuth() {
   const router = useRouter()
+  const authStore = useAuthStore()
   const error = ref('')
   const loading = ref(false)
-
-  const isLoggedIn = computed(() => !!token.value)
-
-  function setToken(t: string) {
-    token.value = t
-    localStorage.setItem('token', t)
-  }
-
-  function clearToken() {
-    token.value = null
-    localStorage.removeItem('token')
-  }
 
   async function login(credentials: { login: string; password: string }) {
     error.value = ''
     if (!credentials.login || !credentials.password) {
       error.value = 'Preencha todos os campos.'
-      return
+      return false
     }
     loading.value = true
     try {
       const response = await api.post('/auth/login', credentials)
-      setToken(response.data.access_token)
-      router.push('/receitas') // Redireciona aqui após o login bem-sucedido
+      authStore.setToken(response.data.access_token)
+      return true
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         const status = e.response?.status
@@ -48,15 +36,23 @@ export function useAuth() {
       } else {
         error.value = 'Ocorreu um erro inesperado.'
       }
+      return false
     } finally {
       loading.value = false
     }
   }
 
   function logout() {
-    clearToken()
+    authStore.logout()
     router.push('/login')
   }
 
-  return { token, isLoggedIn, error, loading, login, logout }
+  return {
+    token: authStore.token,
+    isLoggedIn: authStore.isLoggedIn,
+    error,
+    loading,
+    login,
+    logout,
+  }
 }

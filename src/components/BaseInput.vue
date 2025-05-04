@@ -1,7 +1,8 @@
 <template>
-  <div class="auth-input">
-    <label :for="id">{{ label }}</label>
+  <div class="base-input">
+    <label :for="id" class="base-input__label">{{ label }}</label>
     <input
+      class="base-input__control"
       :id="id"
       :type="type"
       :placeholder="placeholder"
@@ -24,16 +25,28 @@ defineEmits(['update:modelValue'])
 </script>
 
 <style scoped>
-.auth-input {
+.base-input {
   display: flex;
   flex-direction: column;
   margin-bottom: 1rem;
 }
 
-input {
+.base-input__label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.base-input__control {
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 6px;
-  margin-top: 6px;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.base-input__control:focus {
+  outline: none;
+  border-color: #2c3e50;
+  box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.2);
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
   <AppHeader />
-  <div class="login-wrapper">
-    <div class="login-card">
-      <h2>Login</h2>
-      <form @submit.prevent="handleLogin">
+  <div class="login-page__wrapper">
+    <div class="login-page__card">
+      <h2 class="login-page__title">Login</h2>
+      <form @submit.prevent="handleLogin" class="login-page__form">
         <BaseInput id="login" label="Login" type="text" v-model="login" placeholder="login" />
         <BaseInput
           id="password"
@@ -12,19 +12,21 @@
           v-model="password"
           placeholder="••••••••"
         />
-        <BaseButton type="submit" :disabled="loading">Entrar</BaseButton>
-        <p v-if="error" class="error">{{ error }}</p>
+        <BaseButton v-if="!loading" type="submit" class="login-page__button">Entrar</BaseButton>
+        <div v-else class="login-page__loading">Entrando...</div>
+        <p v-if="error" class="login-page__error">{{ error }}</p>
       </form>
-      <p class="register-link">
+      <p class="login-page__register">
         Não tem uma conta?
-        <router-link to="/register">Cadastre‑se</router-link>
+        <router-link to="/register" class="login-page__register-link">Cadastre‑se</router-link>
       </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseButton from '@/components/BaseButton.vue'
@@ -32,15 +34,24 @@ import AppHeader from '@/components/AppHeader.vue'
 
 const login = ref('')
 const password = ref('')
-const { error, loading, login: doLogin } = useAuth()
+const router = useRouter()
+const { token, error, loading, login: doLogin } = useAuth()
 
-const handleLogin = () => {
-  doLogin({ login: login.value, password: password.value })
+onMounted(() => {
+  if (token?.valueOf) {
+    router.push('/receitas')
+  }
+})
+
+const handleLogin = async () => {
+  if (await doLogin({ login: login.value, password: password.value })) {
+    router.push('/receitas')
+  }
 }
 </script>
 
 <style scoped>
-.login-wrapper {
+.login-page__wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,7 +59,7 @@ const handleLogin = () => {
   background: #f9f9f9;
 }
 
-.login-card {
+.login-page__card {
   background: white;
   padding: 2rem;
   border-radius: 10px;
@@ -58,26 +69,42 @@ const handleLogin = () => {
   text-align: left;
 }
 
-h2 {
+.login-page__title {
   margin-bottom: 1.5rem;
   text-align: center;
 }
 
-.error {
+.login-page__form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-page__button {
+  margin-top: 1rem;
+}
+
+.login-page__loading {
+  text-align: center;
+  padding: 0.7rem 1.2rem;
+  color: #555;
+}
+
+.login-page__error {
   color: red;
   margin-top: 0.5rem;
 }
 
-.register-link {
+.login-page__register {
   margin-top: 1rem;
+  text-align: center;
 }
 
-.register-link a {
+.login-page__register-link {
   color: #007bff;
   text-decoration: none;
 }
 
-.register-link a:hover {
+.login-page__register-link:hover {
   text-decoration: underline;
 }
 </style>

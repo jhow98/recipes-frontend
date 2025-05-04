@@ -1,10 +1,11 @@
 <template>
   <div>
     <AppHeader />
-
     <div class="page-wrapper">
-      <div class="detail-card">
+      <div v-if="fetchError" class="info">{{ fetchError }}</div>
+      <div v-else class="detail-card">
         <h2>{{ recipe.name }}</h2>
+        <p><strong>Autor:</strong> {{ recipe.author }} min</p>
         <p><strong>Tempo de preparo:</strong> {{ recipe.preparation_time_minutes }} min</p>
         <p><strong>Porções:</strong> {{ recipe.servings }}</p>
         <p><strong>Ingredientes:</strong></p>
@@ -13,19 +14,21 @@
             {{ ing }}
           </li>
         </ul>
-        <p><strong>Modo de preparo:</strong></p>
         <p class="method">
+          <strong>Modo de preparo:</strong><br />
           {{ recipe.preparation_method }}
         </p>
 
-        <div class="actions" v-if="isOwner">
-          <button @click="edit"><Pencil size:16 /> Editar</button>
-          <button @click="confirmDelete"><Trash2 size:16 /> Excluir</button>
-          <button @click="print"><Printer size:16 /> Imprimir</button>
+        <div class="actions">
+          <button v-if="isOwner" @click="edit">Editar</button>
+          <button v-if="isOwner" @click="confirmDelete">Excluir</button>
+          <button @click="printRecipe(recipe.id, recipe.name)" :disabled="printLoading">
+            Imprimir
+          </button>
+          <p v-if="printError" class="error">{{ printError }}</p>
         </div>
       </div>
     </div>
-
     <ConfirmDeleteModal v-if="showModal" @confirm="remove" @cancel="showModal = false" />
   </div>
 </template>
@@ -36,8 +39,8 @@ import { useRoute, useRouter } from 'vue-router'
 import AppHeader from '@/components/AppHeader.vue'
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal.vue'
 import api from '@/services/api'
+import { usePrintRecipe } from '@/composables/usePrintRecipe'
 import { useAuthStore } from '@/store/auth'
-import { Pencil, Trash2, Printer } from 'lucide-vue-next'
 
 interface Recipe {
   id: number
@@ -48,8 +51,10 @@ interface Recipe {
   ingredients: string
   userId: number
   categoryId: number
+  author: string
 }
 
+const { loading: printLoading, error: printError, printRecipe } = usePrintRecipe()
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
@@ -63,22 +68,27 @@ const recipe = ref<Recipe>({
   ingredients: '',
   userId: 0,
   categoryId: 0,
+  author: '',
 })
 const showModal = ref(false)
+const fetchError = ref('')
 
 onMounted(async () => {
-  const id = Number(route.params.id)
-  const res = await api.get<Recipe>(`/recipes/${id}`)
-  recipe.value = res.data
+  try {
+    const id = Number(route.params.id)
+    const res = await api.get<Recipe>(`/recipes/${id}`)
+    recipe.value = res.data
+  } catch (e: any) {
+    if (e.response?.status === 404) {
+      fetchError.value = 'Receita não existe.'
+    } else {
+      fetchError.value = 'Erro ao carregar a receita. Tente novamente mais tarde.'
+    }
+  }
 })
 
 const ingredientsList = computed(() => recipe.value.ingredients.split(',').map(s => s.trim()))
-
-const isOwner = computed(() => {
-  console.log(recipe.value.userId, 'recipe.value.userId')
-  console.log(auth.userId, 'auth.userId')
-  return recipe.value.userId === auth.userId
-})
+const isOwner = computed(() => recipe.value.userId === auth.userId)
 
 function edit() {
   router.push(`/receitas/${recipe.value.id}/editar`)
@@ -89,15 +99,6 @@ function confirmDelete() {
 async function remove() {
   await api.delete(`/recipes/${recipe.value.id}`)
   router.push('/receitas')
-}
-function print() {
-  api.get(`/recipes/${recipe.value.id}/print`, { responseType: 'blob' }).then(r => {
-    const blob = new Blob([r.data], { type: 'application/pdf' })
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(blob)
-    link.download = `ReceitasApp - ${recipe.value.name}.pdf`
-    link.click()
-  })
 }
 </script>
 
@@ -117,48 +118,58 @@ function print() {
   width: 100%;
 }
 
-.detail-card h2 {
+.detail-card__title {
   margin-bottom: 1rem;
 }
 
-.detail-card ul {
+.detail-card__list {
   list-style: disc;
   margin-left: 1.5rem;
 }
 
-.detail-card .method {
+.detail-card__method {
   white-space: pre-wrap;
   margin-top: 1rem;
 }
 
-.actions {
+.detail-card__actions {
   margin-top: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
-.actions button {
-  margin-right: 0.5rem;
+.detail-card__button {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
-.actions button:hover {
+.detail-card__button:hover {
   opacity: 0.9;
 }
 
-.actions button:nth-child(1) {
+.detail-card__button--edit {
   background: #f0ad4e;
   color: #fff;
 }
 
-.actions button:nth-child(2) {
+.detail-card__button--delete {
   background: #d9534f;
   color: #fff;
 }
 
-.actions button:nth-child(3) {
+.detail-card__button--print {
   background: #5bc0de;
   color: #fff;
+}
+
+.page-wrapper__info {
+  font-size: 1rem;
+  color: #555;
+}
+
+.page-wrapper__error {
+  color: #d9534f;
 }
 </style>

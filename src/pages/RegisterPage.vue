@@ -1,17 +1,25 @@
 <template>
   <AppHeader />
-  <div class="login-wrapper">
-    <div class="login-card">
-      <h2>Cadastrar novo usuário</h2>
+  <div class="register-page__wrapper">
+    <div class="register-page__card">
+      <h2 class="register-page__title">Cadastrar novo usuário</h2>
 
-      <form @submit.prevent="handleRegister">
-        <BaseInput id="login" v-model="login" type="text" label="Login" placeholder="novo.login" />
+      <form @submit.prevent="handleRegister" class="register-page__form">
+        <BaseInput
+          id="login"
+          v-model="login"
+          type="text"
+          label="Login"
+          placeholder="novo.login"
+          class="register-page__input"
+        />
         <BaseInput
           id="password"
           v-model="password"
           type="password"
           label="Senha"
           placeholder="••••••••"
+          class="register-page__input"
         />
         <BaseInput
           id="name"
@@ -19,16 +27,16 @@
           type="text"
           label="Nome completo"
           placeholder="Seu nome"
+          class="register-page__input"
         />
 
-        <BaseButton type="submit"> Cadastrar </BaseButton>
+        <BaseButton v-if="!submitting" type="submit" class="register-page__button">
+          Cadastrar
+        </BaseButton>
+        <div v-else class="register-page__loading">Cadastrando...</div>
 
-        <p v-if="message" class="success">
-          {{ message }}
-        </p>
-        <p v-if="error" class="error">
-          {{ error }}
-        </p>
+        <p v-if="message" class="register-page__success">{{ message }}</p>
+        <p v-if="error" class="register-page__error">{{ error }}</p>
       </form>
     </div>
   </div>
@@ -48,35 +56,32 @@ const password = ref('')
 const name = ref('')
 const error = ref('')
 const message = ref('')
+const submitting = ref(false)
 
 const router = useRouter()
 
 const handleRegister = async () => {
   error.value = ''
   message.value = ''
-
   if (!login.value || !password.value || !name.value) {
     error.value = 'Preencha todos os campos.'
     return
   }
-
   if (password.value.length < 6) {
     error.value = 'A senha deve conter pelo menos 6 caracteres.'
     return
   }
-
   if (name.value.length < 2) {
     error.value = 'Informe um nome válido.'
     return
   }
-
+  submitting.value = true
   try {
     await api.post('/users', {
       login: login.value,
       password: password.value,
       name: name.value,
     })
-
     message.value = 'Usuário cadastrado com sucesso!'
     setTimeout(() => router.push('/login'), 1000)
   } catch (err: unknown) {
@@ -84,6 +89,8 @@ const handleRegister = async () => {
       const status = err.response?.status
       if (status === 400) {
         error.value = 'Verifique os dados preenchidos.'
+      } else if (status === 409) {
+        error.value = 'Login já existe.'
       } else if (status === 500) {
         error.value = 'Erro interno do servidor.'
       } else {
@@ -93,12 +100,14 @@ const handleRegister = async () => {
     } else {
       error.value = 'Erro inesperado.'
     }
+  } finally {
+    submitting.value = false
   }
 }
 </script>
 
 <style scoped>
-.login-wrapper {
+.register-page__wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,7 +115,7 @@ const handleRegister = async () => {
   background: #f9f9f9;
 }
 
-.login-card {
+.register-page__card {
   background: white;
   padding: 2rem;
   border-radius: 10px;
@@ -115,19 +124,38 @@ const handleRegister = async () => {
   max-width: 400px;
 }
 
-h2 {
+.register-page__title {
   margin-bottom: 1.5rem;
   text-align: center;
 }
 
-.error {
-  color: red;
+.register-page__form {
+  display: flex;
+  flex-direction: column;
+}
+
+.register-page__input:not(:last-of-type) {
+  margin-bottom: 1rem;
+}
+
+.register-page__button {
+  margin-top: 1rem;
+}
+
+.register-page__loading {
+  margin-top: 1rem;
+  text-align: center;
+  color: #555;
+}
+
+.register-page__success {
+  color: green;
   margin-top: 0.5rem;
   text-align: center;
 }
 
-.success {
-  color: green;
+.register-page__error {
+  color: red;
   margin-top: 0.5rem;
   text-align: center;
 }

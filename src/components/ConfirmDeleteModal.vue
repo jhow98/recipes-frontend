@@ -1,10 +1,20 @@
 <template>
-  <div class="modal-backdrop">
-    <div class="modal">
-      <p>Tem certeza que deseja excluir esta receita?</p>
-      <div class="actions">
-        <button class="cancel" @click="$emit('cancel')">Cancelar</button>
-        <button class="confirm" @click="$emit('confirm')">Confirmar</button>
+  <div class="confirm-modal__backdrop">
+    <div class="confirm-modal__dialog">
+      <p class="confirm-modal__message">Tem certeza que deseja excluir esta receita?</p>
+      <div class="confirm-modal__actions">
+        <button
+          class="confirm-modal__button confirm-modal__button--cancel"
+          @click="$emit('cancel')"
+        >
+          Cancelar
+        </button>
+        <button
+          class="confirm-modal__button confirm-modal__button--confirm"
+          @click="$emit('confirm')"
+        >
+          Confirmar
+        </button>
       </div>
     </div>
   </div>
@@ -15,7 +25,7 @@ defineEmits(['confirm', 'cancel'])
 </script>
 
 <style scoped>
-.modal-backdrop {
+.confirm-modal__backdrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -28,7 +38,7 @@ defineEmits(['confirm', 'cancel'])
   z-index: 999;
 }
 
-.modal {
+.confirm-modal__dialog {
   background: white;
   padding: 2rem;
   border-radius: 8px;
@@ -38,26 +48,29 @@ defineEmits(['confirm', 'cancel'])
   text-align: center;
 }
 
-.actions {
+.confirm-modal__message {
+  margin: 0;
+}
+
+.confirm-modal__actions {
   margin-top: 1.5rem;
   display: flex;
   justify-content: space-around;
 }
 
-.cancel {
-  background: #ccc;
-  border: none;
+.confirm-modal__button {
   padding: 0.5rem 1rem;
+  border: none;
   border-radius: 6px;
   cursor: pointer;
 }
 
-.confirm {
+.confirm-modal__button--cancel {
+  background: #ccc;
+}
+
+.confirm-modal__button--confirm {
   background: #c0392b;
   color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
 }
 </style>

@@ -1,42 +1,67 @@
 <template>
   <div>
     <AppHeader />
-    <div class="page-wrapper">
-      <h2>Suas receitas</h2>
+    <div class="recipes-page">
+      <h2 class="recipes-page__title">Suas receitas</h2>
 
-      <div v-if="loading" class="info">Carregando receitas…</div>
-      <div v-else-if="error" class="error">{{ error }}</div>
-      <div v-else-if="recipes?.length === 0" class="info">
-        Você não tem receitas cadastradas.
-        <router-link to="/receitas/criar">Crie sua primeira receita</router-link>.
+      <div class="recipes-page__search-bar">
+        <input
+          v-model="searchTerm"
+          type="text"
+          placeholder="Buscar por nome da receita…"
+          class="recipes-page__search-input"
+        />
       </div>
-      <table v-else class="recipe-table">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Tempo de Preparo (min)</th>
-            <th>Porções</th>
-            <th>Ações</th>
+
+      <div v-if="loading" class="recipes-page__info">Carregando receitas…</div>
+      <div v-else-if="error" class="recipes-page__error">{{ error }}</div>
+      <div v-else-if="filteredRecipes.length === 0" class="recipes-page__info">
+        Nenhuma receita encontrada.
+        <router-link to="/receitas/criar" class="recipes-page__link">
+          Crie uma nova receita </router-link
+        >.
+      </div>
+      <table v-else class="recipes-page__table">
+        <thead class="recipes-page__thead">
+          <tr class="recipes-page__row">
+            <th class="recipes-page__th">Nome</th>
+            <th class="recipes-page__th">Tempo de Preparo (min)</th>
+            <th class="recipes-page__th">Porções</th>
+            <th class="recipes-page__th">Ações</th>
           </tr>
         </thead>
-        <tbody>
-          <tr v-for="recipe in recipes" :key="recipe.id">
-            <td>{{ recipe.name }}</td>
-            <td>{{ recipe.preparation_time_minutes }}</td>
-            <td>{{ recipe.servings }}</td>
-            <td class="actions">
-              <button @click="viewRecipe(recipe.id)" title="Visualizar">
+        <tbody class="recipes-page__tbody">
+          <tr v-for="recipe in filteredRecipes" :key="recipe.id" class="recipes-page__row">
+            <td class="recipes-page__cell">{{ recipe.name }}</td>
+            <td class="recipes-page__cell">{{ recipe.preparation_time_minutes }}</td>
+            <td class="recipes-page__cell">{{ recipe.servings }}</td>
+            <td class="recipes-page__cell recipes-page__actions">
+              <button
+                class="recipes-page__button"
+                @click="viewRecipe(recipe.id)"
+                title="Visualizar"
+              >
                 <Eye :size="18" />
               </button>
-              <button @click="editRecipe(recipe.id)" title="Editar">
+              <button class="recipes-page__button" @click="editRecipe(recipe.id)" title="Editar">
                 <Pencil :size="18" />
               </button>
-              <button @click="confirmDelete(recipe.id)" title="Excluir">
+              <button
+                class="recipes-page__button"
+                @click="confirmDelete(recipe.id)"
+                title="Excluir"
+              >
                 <Trash2 :size="18" />
               </button>
-              <button @click="printRecipe(recipe.id, recipe.name)" title="Imprimir">
+              <button
+                class="recipes-page__button"
+                @click="printRecipe(recipe.id, recipe.name)"
+                :disabled="printLoading"
+                title="Imprimir"
+              >
                 <Printer :size="18" />
               </button>
+              <p v-if="printError" class="recipes-page__error">{{ printError }}</p>
             </td>
           </tr>
         </tbody>
@@ -48,13 +73,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal.vue'
 import AppHeader from '@/components/AppHeader.vue'
 import { Eye, Pencil, Trash2, Printer } from 'lucide-vue-next'
 import { useFetch } from '@/composables/useFetch'
-import api from '@/services/api'
+import { usePrintRecipe } from '@/composables/usePrintRecipe'
 
 interface Recipe {
   id: number
@@ -63,10 +88,20 @@ interface Recipe {
   servings: number
 }
 
+const searchTerm = ref('')
+
 const { data: recipes, loading, error, reload } = useFetch<Recipe[]>('/recipes')
+const { loading: printLoading, error: printError, printRecipe } = usePrintRecipe()
 const showModal = ref(false)
 const recipeIdToDelete = ref<number | null>(null)
 const router = useRouter()
+
+const filteredRecipes = computed(() => {
+  if (!searchTerm.value) return recipes.value || []
+  return (recipes.value || []).filter(r =>
+    r.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+  )
+})
 
 const viewRecipe = (id: number) => {
   router.push(`/receitas/${id}`)
@@ -88,62 +123,67 @@ const deleteRecipe = async () => {
   recipeIdToDelete.value = null
   reload()
 }
-
-const printRecipe = async (id: number, name: string) => {
-  const response = await api.get(`/recipes/${id}/print`, {
-    responseType: 'blob',
-  })
-  const blob = new Blob([response.data], { type: 'application/pdf' })
-  const link = document.createElement('a')
-  link.href = window.URL.createObjectURL(blob)
-  link.download = `ReceitasApp - ${name}.pdf`
-  link.click()
-}
 </script>
 
 <style scoped>
-.page-wrapper {
+.recipes-page {
   padding: 2rem;
 }
 
-.recipe-table {
+.recipes-page__search-bar {
+  margin-bottom: 1rem;
+}
+
+.recipes-page__search-input {
+  width: 300px;
+  max-width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.recipes-page__table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
 }
 
-.recipe-table th,
-.recipe-table td {
+.recipes-page__th,
+.recipes-page__cell {
   border: 1px solid #ddd;
   padding: 0.8rem;
 }
 
-.recipe-table th {
+.recipes-page__th {
   background-color: #f4f4f4;
   text-align: left;
 }
 
-.actions button {
+.recipes-page__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.recipes-page__button {
   background: white;
   border: 1px solid #ccc;
   border-radius: 6px;
   padding: 6px;
-  margin-right: 6px;
   cursor: pointer;
   transition: 0.2s ease;
 }
 
-.actions button:hover {
+.recipes-page__button:hover {
   background: #f0f0f0;
 }
 
-.info {
+.recipes-page__info {
   font-size: 0.875rem;
   color: #555;
   margin-top: 1rem;
 }
 
-.error {
+.recipes-page__error {
   color: #d9534f;
   font-size: 0.875rem;
   margin-top: 1rem;

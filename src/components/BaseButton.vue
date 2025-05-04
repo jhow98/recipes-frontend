@@ -1,5 +1,10 @@
 <template>
-  <button class="auth-button" :type="type" v-bind="$attrs">
+  <button
+    class="base-button"
+    :class="{ 'base-button--disabled': disabled }"
+    :type="type"
+    v-bind="$attrs"
+  >
     <slot />
   </button>
 </template>
@@ -9,7 +14,7 @@ defineProps<{ type?: 'button' | 'submit'; disabled?: boolean }>()
 </script>
 
 <style scoped>
-.auth-button {
+.base-button {
   background-color: #2c3e50;
   color: white;
   padding: 0.7rem 1.2rem;
@@ -20,7 +25,7 @@ defineProps<{ type?: 'button' | 'submit'; disabled?: boolean }>()
   transition: background-color 0.2s;
 }
 
-.auth-button:disabled {
+.base-button--disabled {
   background-color: #95a5a6;
   cursor: not-allowed;
   opacity: 0.6;

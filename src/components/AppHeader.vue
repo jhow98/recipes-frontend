@@ -1,30 +1,37 @@
 <template>
   <header class="header">
-    <h1 class="title">Receitas App</h1>
-    <nav class="nav">
+    <h1 class="header__title">Receitas App</h1>
+    <nav class="header__nav">
       <RouterLink
-        v-if="!auth.isLoggedIn"
         to="/register"
-        :class="{ active: route.path === '/register' }"
+        class="header__nav-link"
+        :class="{ 'header__nav-link--active': route.path === '/register' }"
       >
         Cadastrar Usuário
       </RouterLink>
-      <button v-if="!auth.isLoggedIn" @click="router.push('/login')">Login</button>
+      <button v-if="!auth.isLoggedIn" class="header__nav-button" @click="router.push('/login')">
+        Login
+      </button>
       <RouterLink
         v-if="auth.isLoggedIn"
         to="/receitas"
-        :class="{ active: route.path.startsWith('/receitas') && !route.path.includes('criar') }"
+        class="header__nav-link"
+        :class="{
+          'header__nav-link--active':
+            route.path.startsWith('/receitas') && !route.path.includes('criar'),
+        }"
       >
         Minhas Receitas
       </RouterLink>
       <RouterLink
         v-if="auth.isLoggedIn"
         to="/receitas/criar"
-        :class="{ active: route.path === '/receitas/criar' }"
+        class="header__nav-link"
+        :class="{ 'header__nav-link--active': route.path === '/receitas/criar' }"
       >
         Nova Receita
       </RouterLink>
-      <button v-if="auth.isLoggedIn" @click="logout">Logout</button>
+      <button v-if="auth.isLoggedIn" class="header__nav-button" @click="logout">Logout</button>
     </nav>
   </header>
 </template>
@@ -53,29 +60,29 @@ const logout = () => {
   align-items: center;
 }
 
-.title {
+.header__title {
   margin: 0;
   font-size: 1.5rem;
 }
 
-.nav {
+.header__nav {
   display: flex;
   gap: 1rem;
   align-items: center;
 }
 
-.nav a {
+.header__nav-link {
   color: white;
   text-decoration: none;
   font-weight: bold;
   padding-bottom: 0.25em;
 }
 
-.nav a.active {
+.header__nav-link--active {
   border-bottom: 2px solid white;
 }
 
-.nav button {
+.header__nav-button {
   background: transparent;
   border: 1px solid white;
   color: white;
