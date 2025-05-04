@@ -95,7 +95,7 @@ const printRecipe = async (id: number, name: string) => {
   const blob = new Blob([response.data], { type: 'application/pdf' });
   const link = document.createElement('a');
   link.href = window.URL.createObjectURL(blob);
-  link.download = `receita-${name}.pdf`;
+  link.download = `ReceitasApp - ${name}.pdf`;
   link.click();
 };
 </script>

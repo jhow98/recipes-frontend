@@ -9,10 +9,14 @@
                 <p><strong>Porções:</strong> {{ recipe.servings }}</p>
                 <p><strong>Ingredientes:</strong></p>
                 <ul>
-                    <li v-for="ing in ingredientsList" :key="ing">{{ ing }}</li>
+                    <li v-for="ing in ingredientsList" :key="ing">
+                        {{ ing }}
+                    </li>
                 </ul>
                 <p><strong>Modo de preparo:</strong></p>
-                <p class="method">{{ recipe.preparation_method }}</p>
+                <p class="method">
+                    {{ recipe.preparation_method }}
+                </p>
 
                 <div class="actions" v-if="isOwner">
                     <button @click="edit">
@@ -95,7 +99,7 @@ function print() {
             const blob = new Blob([r.data], { type: 'application/pdf' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `receita-${recipe.value.name}.pdf`;
+            link.download = `ReceitasApp - ${recipe.value.name}.pdf`;
             link.click();
         });
 }

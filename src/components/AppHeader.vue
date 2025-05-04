@@ -3,18 +3,21 @@
     <h1 class="title">
       Receitas App
     </h1>
-
     <nav class="nav">
-      <RouterLink to="/register">
+      <RouterLink v-if="!auth.isLoggedIn" to="/register" :class="{ active: route.path === '/register' }">
         Cadastrar Usuário
       </RouterLink>
-      <RouterLink to="/receitas/criar">
-        Nova Receita
-      </RouterLink>
-      <RouterLink to="/receitas">
+      <button v-if="!auth.isLoggedIn" @click="router.push('/login')">
+        Login
+      </button>
+      <RouterLink v-if="auth.isLoggedIn" to="/receitas"
+        :class="{ active: route.path.startsWith('/receitas') && !route.path.includes('criar') }">
         Minhas Receitas
       </RouterLink>
-      <button @click="logout">
+      <RouterLink v-if="auth.isLoggedIn" to="/receitas/criar" :class="{ active: route.path === '/receitas/criar' }">
+        Nova Receita
+      </RouterLink>
+      <button v-if="auth.isLoggedIn" @click="logout">
         Logout
       </button>
     </nav>
@@ -22,16 +25,17 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/store/auth';
+import { useRouter, useRoute } from 'vue-router'
+import { useAuthStore } from '@/store/auth'
 
-const router = useRouter();
-const auth = useAuthStore();
+const router = useRouter()
+const route = useRoute()
+const auth = useAuthStore()
 
 const logout = () => {
-  auth.logout();
-  router.push('/login');
-};
+  auth.logout()
+  router.push('/login')
+}
 </script>
 
 <style scoped>
@@ -59,6 +63,11 @@ const logout = () => {
   color: white;
   text-decoration: none;
   font-weight: bold;
+  padding-bottom: 0.25em;
+}
+
+.nav a.active {
+  border-bottom: 2px solid white;
 }
 
 .nav button {

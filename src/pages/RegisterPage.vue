@@ -80,7 +80,7 @@ const handleRegister = async () => {
         error.value = 'Erro interno do servidor.'
       }
       else {
-        error.value = 'Erro ao cadastrar usuário.'
+        error.value = 'Ops! Nosso servidor está acordando agora — aguarde 1 minutinho e tente de novo. 🍃'
       }
     }
     else {
