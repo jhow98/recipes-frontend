@@ -1,12 +1,11 @@
 <template>
-  <button class="auth-button" :type="type">
+  <button class="auth-button" :type="type" v-bind="$attrs">
     <slot />
   </button>
 </template>
 
 <script setup lang="ts">
-// global defineProps
-defineProps<{ type?: 'button' | 'submit' }>()
+defineProps<{ type?: 'button' | 'submit'; disabled?: boolean }>()
 </script>
 
 <style scoped>
@@ -18,5 +17,12 @@ defineProps<{ type?: 'button' | 'submit' }>()
   border-radius: 6px;
   cursor: pointer;
   width: 100%;
+  transition: background-color 0.2s;
+}
+
+.auth-button:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 </style>

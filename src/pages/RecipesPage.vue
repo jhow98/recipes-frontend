@@ -4,7 +4,13 @@
     <div class="page-wrapper">
       <h2>Suas receitas</h2>
 
-      <table class="recipe-table">
+      <div v-if="loading" class="info">Carregando receitas…</div>
+      <div v-else-if="error" class="error">{{ error }}</div>
+      <div v-else-if="recipes?.length === 0" class="info">
+        Você não tem receitas cadastradas.
+        <router-link to="/receitas/criar">Crie sua primeira receita</router-link>.
+      </div>
+      <table v-else class="recipe-table">
         <thead>
           <tr>
             <th>Nome</th>
@@ -42,12 +48,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal.vue'
 import AppHeader from '@/components/AppHeader.vue'
-import api from '@/services/api'
 import { Eye, Pencil, Trash2, Printer } from 'lucide-vue-next'
+import { useFetch } from '@/composables/useFetch'
+import api from '@/services/api'
 
 interface Recipe {
   id: number
@@ -56,24 +63,18 @@ interface Recipe {
   servings: number
 }
 
-const recipes = ref<Recipe[]>([])
-
+const { data: recipes, loading, error, reload } = useFetch<Recipe[]>('/recipes')
 const showModal = ref(false)
 const recipeIdToDelete = ref<number | null>(null)
 const router = useRouter()
-
-const fetchRecipes = async () => {
-  const { data } = await api.get<Recipe[]>('/recipes')
-  recipes.value = data
-}
-
-onMounted(fetchRecipes)
 
 const viewRecipe = (id: number) => {
   router.push(`/receitas/${id}`)
 }
 
-const editRecipe = (id: number) => router.push(`/receitas/${id}/editar`)
+const editRecipe = (id: number) => {
+  router.push(`/receitas/${id}/editar`)
+}
 
 const confirmDelete = (id: number) => {
   recipeIdToDelete.value = id
@@ -82,10 +83,10 @@ const confirmDelete = (id: number) => {
 
 const deleteRecipe = async () => {
   if (!recipeIdToDelete.value) return
-  await api.delete(`/recipes/${recipeIdToDelete.value}`)
+  await fetch(`/recipes/${recipeIdToDelete.value}`, { method: 'DELETE' })
   showModal.value = false
   recipeIdToDelete.value = null
-  await fetchRecipes()
+  reload()
 }
 
 const printRecipe = async (id: number, name: string) => {
@@ -134,5 +135,17 @@ const printRecipe = async (id: number, name: string) => {
 
 .actions button:hover {
   background: #f0f0f0;
+}
+
+.info {
+  font-size: 0.875rem;
+  color: #555;
+  margin-top: 1rem;
+}
+
+.error {
+  color: #d9534f;
+  font-size: 0.875rem;
+  margin-top: 1rem;
 }
 </style>

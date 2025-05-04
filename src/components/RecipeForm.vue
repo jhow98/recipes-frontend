@@ -7,9 +7,7 @@
       v-model="form.name"
       placeholder="Ex: Arroz Carreteiro"
     />
-    <p v-if="errors.name" class="error">
-      {{ errors.name }}
-    </p>
+    <p v-if="errors.name" class="error">{{ errors.name }}</p>
 
     <div class="two-columns">
       <div class="col">
@@ -32,9 +30,7 @@
           v-model.number="form.servings"
           placeholder="Ex: 4"
         />
-        <p v-if="errors.servings" class="error">
-          {{ errors.servings }}
-        </p>
+        <p v-if="errors.servings" class="error">{{ errors.servings }}</p>
       </div>
     </div>
 
@@ -45,9 +41,7 @@
       v-model="form.ingredients"
       placeholder="Ex: arroz, carne, temperos"
     />
-    <p v-if="errors.ingredients" class="error">
-      {{ errors.ingredients }}
-    </p>
+    <p v-if="errors.ingredients" class="error">{{ errors.ingredients }}</p>
 
     <div class="textarea-wrapper">
       <label for="preparation_method">Modo de preparo</label>
@@ -58,31 +52,29 @@
         rows="6"
       />
     </div>
-    <p v-if="errors.preparation_method" class="error">
-      {{ errors.preparation_method }}
-    </p>
+    <p v-if="errors.preparation_method" class="error">{{ errors.preparation_method }}</p>
 
-    <select v-model.number="form.categoryId" class="select-input">
-      <option value="">Selecione uma categoria</option>
-      <option v-for="cat in categories" :key="cat.id" :value="cat.id">
-        {{ cat.name }}
-      </option>
-    </select>
-    <p v-if="errors.categoryId" class="error">
-      {{ errors.categoryId }}
-    </p>
+    <div class="select-wrapper">
+      <select v-model.number="form.categoryId" class="select-input" :disabled="catLoading">
+        <option value="">Selecione uma categoria</option>
+        <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+          {{ cat.name }}
+        </option>
+      </select>
+      <p v-if="catLoading" class="info">Carregando categorias…</p>
+      <p v-if="catError" class="error">{{ catError }}</p>
+    </div>
+    <p v-if="errors.categoryId" class="error">{{ errors.categoryId }}</p>
 
-    <BaseButton type="submit">
-      {{ submitLabel }}
-    </BaseButton>
+    <BaseButton type="submit">{{ submitLabel }}</BaseButton>
   </form>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, watch } from 'vue'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import api from '@/services/api'
+import { useCategories } from '@/composables/useCategories'
 
 const props = defineProps<{
   modelValue: any
@@ -94,12 +86,7 @@ const emit = defineEmits(['update:modelValue', 'submit'])
 const form = ref({ ...props.modelValue })
 const errors = ref<Record<string, string>>({})
 
-const categories = ref<{ id: number; name: string }[]>([])
-async function fetchCategories() {
-  const { data } = await api.get('/categories')
-  categories.value = data
-}
-onMounted(fetchCategories)
+const { categories, loading: catLoading, error: catError } = useCategories()
 
 watch(
   () => props.modelValue,
@@ -162,16 +149,26 @@ function handleSubmit() {
   margin-top: 0.5rem;
 }
 
-.error {
-  color: #d9534f;
-  font-size: 0.875rem;
+.select-wrapper {
+  margin-bottom: 1rem;
 }
 
 .select-input {
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 6px;
-  margin-bottom: 1rem;
   width: 100%;
+}
+
+.info {
+  font-size: 0.875rem;
+  color: #555;
+  margin-top: 0.25rem;
+}
+
+.error {
+  color: #d9534f;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 </style>
