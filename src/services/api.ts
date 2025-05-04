@@ -1,29 +1,46 @@
-import axios from 'axios'
-import type { RawAxiosRequestHeaders } from 'axios'
-import { AxiosHeaders } from 'axios'
+import axios from 'axios';
+import type { RawAxiosRequestHeaders } from 'axios';
+import { AxiosHeaders } from 'axios';
+import { useAuthStore } from '@/store/auth';
+import router from '@/router';
 
 const api = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
-  timeout: 10_000,
-})
+  timeout: 10000,
+});
 
-export function authHeader(): RawAxiosRequestHeaders {
-  const token = localStorage.getItem('token')
-  return token
-    ? { Authorization: `Bearer ${token}` }
-    : {}
-}
+const getAuthHeader = (): RawAxiosRequestHeaders => {
+  const token = localStorage.getItem('token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 api.interceptors.request.use((config) => {
-  const h = new AxiosHeaders(config.headers)
+  const headers = new AxiosHeaders(config.headers);
+  const authHeaders = getAuthHeader();
 
-  for (const [k, v] of Object.entries(authHeader())) {
-    h.set(k, v!)
+  for (const [key, value] of Object.entries(authHeaders)) {
+    headers.set(key, value);
   }
 
-  config.headers = h
+  config.headers = headers;
+  return config;
+}, (error) => Promise.reject(error));
 
-  return config
-}, (err) => Promise.reject(err))
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const authStore = useAuthStore();
 
-export default api
+    if (error.response && error.response.status === 401) {
+      authStore.logout();
+
+      router.push('/login');
+
+      return Promise.resolve();
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default api;

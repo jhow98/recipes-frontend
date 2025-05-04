@@ -1,30 +1,13 @@
 <template>
+  <AppHeader />
   <div class="login-wrapper">
     <div class="login-card">
-      <h2>Cadastro</h2>
+      <h2>Cadastrar novo usuário</h2>
 
       <form @submit.prevent="handleRegister">
-        <BaseInput
-          id="login"
-          v-model="login"
-          type="text"
-          label="Login"
-          placeholder="novo.login"
-        />
-        <BaseInput
-          id="password"
-          v-model="password"
-          type="password"
-          label="Senha"
-          placeholder="••••••••"
-        />
-        <BaseInput
-          id="name"
-          v-model="name"
-          type="text"
-          label="Nome completo"
-          placeholder="Seu nome"
-        />
+        <BaseInput id="login" v-model="login" type="text" label="Login" placeholder="novo.login" />
+        <BaseInput id="password" v-model="password" type="password" label="Senha" placeholder="••••••••" />
+        <BaseInput id="name" v-model="name" type="text" label="Nome completo" placeholder="Seu nome" />
 
         <BaseButton type="submit">
           Cadastrar
@@ -48,6 +31,7 @@ import axios from 'axios'
 import api from '@/services/api'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseButton from '@/components/BaseButton.vue'
+import AppHeader from '@/components/AppHeader.vue';
 
 const login = ref('')
 const password = ref('')

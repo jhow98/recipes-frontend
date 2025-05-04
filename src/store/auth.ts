@@ -1,23 +1,41 @@
-// src/store/auth.ts
 import { defineStore } from 'pinia'
-import router from '@/router'
+import {jwtDecode} from 'jwt-decode'
+import type { JwtPayload } from '@/types/jwt-payload'
 
 export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    token: localStorage.getItem('token') as string | null
-  }),
+  state: () => {
+    const token = localStorage.getItem('token')
+    let payload: JwtPayload | null = null
+    if (token) {
+      try {
+        payload = jwtDecode<JwtPayload>(token)
+      } catch {
+        payload = null
+      }
+    }
+    return {
+      token,
+      payload,
+    }
+  },
   getters: {
-    isLoggedIn: (state): boolean => !!state.token
+    isLoggedIn: state => !!state.token,
+    userId:    state => state.payload?.sub ?? null,
   },
   actions: {
     setToken(token: string) {
       this.token = token
       localStorage.setItem('token', token)
+      try {
+        this.payload = jwtDecode<JwtPayload>(token)
+      } catch {
+        this.payload = null
+      }
     },
     logout() {
       this.token = null
+      this.payload = null
       localStorage.removeItem('token')
-      router.push('/login')
     }
   }
 })

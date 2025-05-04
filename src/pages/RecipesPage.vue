@@ -1,9 +1,8 @@
 <template>
   <div>
     <AppHeader />
-
     <div class="page-wrapper">
-      <h2>Receitas</h2>
+      <h2>Suas receitas</h2>
 
       <table class="recipe-table">
         <thead>
@@ -29,7 +28,7 @@
               <button @click="confirmDelete(recipe.id)" title="Excluir">
                 <Trash2 :size="18" />
               </button>
-              <button @click="printRecipe(recipe.id)" title="Imprimir">
+              <button @click="printRecipe(recipe.id, recipe.name)" title="Imprimir">
                 <Printer :size="18" />
               </button>
             </td>
@@ -71,11 +70,8 @@ const fetchRecipes = async () => {
 onMounted(fetchRecipes);
 
 const viewRecipe = (id: number) => {
-  window.open(
-    `https://recipes-backend-zqco.onrender.com/recipes/${id}/imprimir`,
-    '_blank'
-  );
-};
+  router.push(`/receitas/${id}`)
+}
 
 const editRecipe = (id: number) => router.push(`/receitas/${id}/editar`);
 
@@ -92,14 +88,14 @@ const deleteRecipe = async () => {
   await fetchRecipes();
 };
 
-const printRecipe = async (id: number) => {
-  const response = await api.get(`/recipes/${id}/imprimir`, {
+const printRecipe = async (id: number, name: string) => {
+  const response = await api.get(`/recipes/${id}/print`, {
     responseType: 'blob',
   });
   const blob = new Blob([response.data], { type: 'application/pdf' });
   const link = document.createElement('a');
   link.href = window.URL.createObjectURL(blob);
-  link.download = `receita-${id}.pdf`;
+  link.download = `receita-${name}.pdf`;
   link.click();
 };
 </script>

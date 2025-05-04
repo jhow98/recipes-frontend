@@ -11,6 +11,9 @@
       <RouterLink to="/receitas/criar">
         Nova Receita
       </RouterLink>
+      <RouterLink to="/receitas">
+        Minhas Receitas
+      </RouterLink>
       <button @click="logout">
         Logout
       </button>
@@ -26,44 +29,44 @@ const router = useRouter();
 const auth = useAuthStore();
 
 const logout = () => {
-    auth.logout();
-    router.push('/login');
+  auth.logout();
+  router.push('/login');
 };
 </script>
 
 <style scoped>
 .header {
-    background-color: #2c3e50;
-    color: white;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background-color: #2c3e50;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .title {
-    margin: 0;
-    font-size: 1.5rem;
+  margin: 0;
+  font-size: 1.5rem;
 }
 
 .nav {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
 .nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 .nav button {
-    background: transparent;
-    border: 1px solid white;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
 }
 </style>

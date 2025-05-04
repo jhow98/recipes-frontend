@@ -1,13 +1,15 @@
 <template>
-  <div class="page-wrapper">
-    <h2>Editar Receita</h2>
-    <RecipeForm :model-value="recipe" submit-label="Salvar" @submit="handleSubmit" />
-  </div>
+    <AppHeader />
+    <div class="page-wrapper">
+        <h2>Editar Receita</h2>
+        <RecipeForm :model-value="recipe" submit-label="Salvar" @submit="handleSubmit" />
+    </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import AppHeader from '@/components/AppHeader.vue';
 import api from '@/services/api';
 import RecipeForm from '@/components/RecipeForm.vue';
 
