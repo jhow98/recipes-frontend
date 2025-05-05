@@ -32,8 +32,9 @@ export function usePrintRecipe() {
           .join('')}</ul>
         <h3 style="color:#666;">Modo de Preparo</h3>
         <p>${recipe.preparation_method}</p>
-        <p>Receita criada por <strong>${recipe.author}</strong></p>
+        <p>Receita criada por <strong>${recipe.user.name}</strong></p>
       `
+      console.log(recipe)
       document.body.appendChild(container)
 
       const canvas = await html2canvas(container, { scale: 2 })
