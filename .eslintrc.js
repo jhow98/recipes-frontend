@@ -16,6 +16,7 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module'
   },
+  
   rules: {
     'vue/html-indent': ['error', 2],
     '@typescript-eslint/no-explicit-any': 'off',

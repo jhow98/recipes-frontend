@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "strict": true,
+    "types": ["cypress", "node"],
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
@@ -23,6 +24,8 @@
     "src/**/*.vue"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "cypress.config.ts",
+    "cypress/"
   ]
 }

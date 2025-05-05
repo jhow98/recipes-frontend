@@ -80,6 +80,7 @@ import AppHeader from '@/components/AppHeader.vue'
 import { Eye, Pencil, Trash2, Printer } from 'lucide-vue-next'
 import { useFetch } from '@/composables/useFetch'
 import { usePrintRecipe } from '@/composables/usePrintRecipe'
+import api from '@/services/api'
 
 interface Recipe {
   id: number
@@ -118,7 +119,7 @@ const confirmDelete = (id: number) => {
 
 const deleteRecipe = async () => {
   if (!recipeIdToDelete.value) return
-  await fetch(`/recipes/${recipeIdToDelete.value}`, { method: 'DELETE' })
+  await await api.delete(`/recipes/${recipeIdToDelete.value}`)
   showModal.value = false
   recipeIdToDelete.value = null
   reload()
