@@ -81,7 +81,7 @@
     <BaseButton v-if="!submitting" type="submit" class="recipe-form__button">
       {{ submitLabel }}
     </BaseButton>
-    <div v-else class="recipe-form__loading">Criando receita...</div>
+    <div v-else class="recipe-form__loading">Enviando...</div>
   </form>
 </template>
 

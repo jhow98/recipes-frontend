@@ -5,7 +5,7 @@
       <div v-if="fetchError" class="info">{{ fetchError }}</div>
       <div v-else class="detail-card">
         <h2>{{ recipe.name }}</h2>
-        <p><strong>Autor:</strong> {{ recipe.author }} min</p>
+        <p><strong>Autor:</strong> {{ recipe.author }}</p>
         <p><strong>Tempo de preparo:</strong> {{ recipe.preparation_time_minutes }} min</p>
         <p><strong>Porções:</strong> {{ recipe.servings }}</p>
         <p><strong>Ingredientes:</strong></p>
@@ -19,10 +19,26 @@
           {{ recipe.preparation_method }}
         </p>
 
-        <div class="actions">
-          <button v-if="isOwner" @click="edit">Editar</button>
-          <button v-if="isOwner" @click="confirmDelete">Excluir</button>
-          <button @click="printRecipe(recipe.id, recipe.name)" :disabled="printLoading">
+        <div class="detail-card__actions">
+          <button
+            v-if="isOwner"
+            @click="edit"
+            class="detail-card__button detail-card__button--edit"
+          >
+            Editar
+          </button>
+          <button
+            v-if="isOwner"
+            @click="confirmDelete"
+            class="detail-card__button detail-card__button--delete"
+          >
+            Excluir
+          </button>
+          <button
+            @click="printRecipe(recipe.id, recipe.name)"
+            :disabled="printLoading"
+            class="detail-card__button detail-card__button--print"
+          >
             Imprimir
           </button>
           <p v-if="printError" class="error">{{ printError }}</p>

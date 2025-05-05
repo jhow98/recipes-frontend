@@ -1,26 +1,26 @@
-import { ref, onMounted } from 'vue'
 import api from '@/services/api'
-import type { AxiosRequestConfig } from 'axios'
+import { ref } from 'vue'
 
-export function useFetch<T>(url: string, options?: AxiosRequestConfig) {
+export function useFetch<T>(url: string) {
   const data = ref<T | null>(null)
   const loading = ref(false)
-  const error = ref<string | null>(null)
+  const error = ref('')
 
   async function load() {
     loading.value = true
-    error.value = null
+    error.value = ''
+    data.value = null
     try {
-      const res = await api.request<T>({ url, ...options })
-      data.value = res.data
-    } catch (err: any) {
-      error.value = err.message
+      const response = await api.get<T>(url)
+      data.value = response.data
+    } catch (e: any) {
+      error.value = e.message || 'Não foi possível carregar dados.'
     } finally {
       loading.value = false
     }
   }
 
-  onMounted(load)
+  load()
 
   return { data, loading, error, reload: load }
 }

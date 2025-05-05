@@ -10,15 +10,15 @@ module.exports = {
     'plugin:vue/vue3-essential',
     'eslint:recommended',
     '@vue/typescript/recommended',
-    'plugin:prettier/recommended',
+    'plugin:prettier/recommended'
   ],
   parserOptions: {
     ecmaVersion: 2020,
-    sourceType: 'module',
+    sourceType: 'module'
   },
   rules: {
     'vue/html-indent': ['error', 2],
     '@typescript-eslint/no-explicit-any': 'off',
-    'prettier/prettier': ['error', { endOfLine: 'auto' }],
-  },
+    'prettier/prettier': ['error', { endOfLine: 'auto' }]
+  }
 };

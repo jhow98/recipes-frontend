@@ -4,35 +4,37 @@ import { useAuthStore } from '@/store/auth'
 import api from '@/services/api'
 import axios from 'axios'
 
+interface Credentials {
+  login: string
+  password: string
+}
+
+interface AuthResponse {
+  access_token: string
+}
+
 export function useAuth() {
   const router = useRouter()
   const authStore = useAuthStore()
   const error = ref('')
   const loading = ref(false)
 
-  async function login(credentials: { login: string; password: string }) {
+  async function login(credentials: Credentials): Promise<boolean> {
     error.value = ''
     if (!credentials.login || !credentials.password) {
       error.value = 'Preencha todos os campos.'
       return false
     }
+
     loading.value = true
     try {
-      const response = await api.post('/auth/login', credentials)
+      const response = await api.post<AuthResponse>('/auth/login', credentials)
       authStore.setToken(response.data.access_token)
       return true
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         const status = e.response?.status
-        if (status === 400) {
-          error.value = 'Preencha corretamente os dados.'
-        } else if (status === 401) {
-          error.value = 'Credenciais inválidas.'
-        } else if (status === 500) {
-          error.value = 'Erro interno do servidor.'
-        } else {
-          error.value = 'Servidor acordando… aguarde um minuto e tente novamente.'
-        }
+        error.value = getErrorMessage(status)
       } else {
         error.value = 'Ocorreu um erro inesperado.'
       }
@@ -42,7 +44,20 @@ export function useAuth() {
     }
   }
 
-  function logout() {
+  function getErrorMessage(status?: number): string {
+    switch (status) {
+      case 400:
+        return 'Preencha corretamente os dados.'
+      case 401:
+        return 'Credenciais inválidas.'
+      case 500:
+        return 'Erro interno do servidor.'
+      default:
+        return 'Servidor acordando… aguarde um minuto e tente novamente.'
+    }
+  }
+
+  function logout(): void {
     authStore.logout()
     router.push('/login')
   }
