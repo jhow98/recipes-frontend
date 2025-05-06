@@ -2,7 +2,9 @@ import { shallowMount } from '@vue/test-utils'
 import RecipeForm from '@/components/RecipeForm.vue'
 
 jest.mock('@/services/api', () => ({}))
-jest.mock('@/composables/useCategories', () => ({ useCategories: () => ({ categories: [], loading: false, error: '' }) }))
+jest.mock('@/composables/useCategories', () => ({
+  useCategories: () => ({ categories: [], loading: false, error: '' }),
+}))
 
 describe('RecipeForm (simplificado)', () => {
   it('monta o form sem erros', () => {
@@ -14,11 +16,11 @@ describe('RecipeForm (simplificado)', () => {
           servings: 1,
           ingredients: '',
           preparation_method: '',
-          categoryId: ''
+          categoryId: '',
         },
-        submitLabel: 'OK'
+        submitLabel: 'OK',
       },
-      global: { stubs: ['BaseInput','BaseButton'] }
+      global: { stubs: ['BaseInput', 'BaseButton'] },
     })
     expect(wrapper.find('form').exists()).toBe(true)
   })

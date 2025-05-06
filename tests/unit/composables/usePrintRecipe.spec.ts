@@ -20,12 +20,17 @@ describe('usePrintRecipe', () => {
       servings: 2,
       ingredients: 'a,b,c',
       preparation_method: 'mix',
-      author: 'auth'
+      user: { name: 'auth' },
     }
     ;(api.get as jest.Mock).mockResolvedValue({ data: recipe })
 
-    const fakeCanvas = { width: 100, height: 50, toDataURL: () => 'data-url' }
-    ;(html2canvas as jest.Mock).mockResolvedValue(fakeCanvas)
+    const html2canvasMock = html2canvas as jest.Mock
+    const fakeCanvas = {
+      width: 100,
+      height: 50,
+      toDataURL: jest.fn().mockReturnValue('data-url'),
+    }
+    html2canvasMock.mockResolvedValue(fakeCanvas)
 
     const addImage = jest.fn()
     const addPage = jest.fn()
@@ -34,17 +39,25 @@ describe('usePrintRecipe', () => {
       internal: { pageSize: { getWidth: () => 200, getHeight: () => 100 } },
       addImage,
       addPage,
-      save
+      save,
     }))
 
     const { loading, error, printRecipe } = usePrintRecipe()
     const p = printRecipe(5, 'MyRecipe')
+
     expect(loading.value).toBe(true)
+
     await p
+
     expect(api.get).toHaveBeenCalledWith('/recipes/5')
-    expect(html2canvas).toHaveBeenCalled()
+
+    expect(html2canvasMock).toHaveBeenCalledWith(expect.any(HTMLDivElement), { scale: 2 })
+    expect(fakeCanvas.toDataURL).toHaveBeenCalledWith('image/jpeg', 0.9)
+
     expect(addImage).toHaveBeenCalled()
+
     expect(save).toHaveBeenCalledWith('ReceitasApp - MyRecipe.pdf')
+
     expect(loading.value).toBe(false)
     expect(error.value).toBeNull()
   })

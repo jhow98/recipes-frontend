@@ -1,20 +1,20 @@
 import { useAuth } from '@/composables/useAuth'
 
 jest.mock('@/services/api', () => ({
-  post: jest.fn()
+  post: jest.fn(),
 }))
 
 jest.mock('axios', () => ({
   isAxiosError: jest.fn(),
-  default: jest.fn()
+  default: jest.fn(),
 }))
 
 jest.mock('vue-router', () => ({
-  useRouter: jest.fn()
+  useRouter: jest.fn(),
 }))
 
 jest.mock('@/store/auth', () => ({
-  useAuthStore: jest.fn()
+  useAuthStore: jest.fn(),
 }))
 
 const mockApiPost = require('@/services/api').post as jest.Mock
@@ -33,14 +33,14 @@ describe('useAuth', () => {
     mockLogout = jest.fn()
 
     mockUseRouter.mockReturnValue({
-      push: mockPush
+      push: mockPush,
     })
 
     mockUseAuthStore.mockReturnValue({
       token: { value: null },
       isLoggedIn: { value: false },
       setToken: mockSetToken,
-      logout: mockLogout
+      logout: mockLogout,
     })
 
     jest.clearAllMocks()
@@ -49,7 +49,7 @@ describe('useAuth', () => {
   describe('login()', () => {
     it('deve fazer login com sucesso', async () => {
       mockApiPost.mockResolvedValue({
-        data: { access_token: 'test-token' }
+        data: { access_token: 'test-token' },
       })
 
       const { login } = useAuth()
@@ -59,14 +59,14 @@ describe('useAuth', () => {
       expect(mockSetToken).toHaveBeenCalledWith('test-token')
       expect(mockApiPost).toHaveBeenCalledWith('/auth/login', {
         login: 'user',
-        password: 'pass'
+        password: 'pass',
       })
     })
 
     it('deve lidar com erro de credenciais inválidas', async () => {
       mockApiPost.mockRejectedValue({
         response: { status: 401 },
-        isAxiosError: true
+        isAxiosError: true,
       })
       mockIsAxiosError.mockReturnValue(true)
 

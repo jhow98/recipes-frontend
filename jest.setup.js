@@ -1,2 +1,6 @@
-jest.mock('html2canvas', () => jest.fn())
-jest.mock('jspdf', () => ({ jsPDF: jest.fn().mockReturnValue({ addImage: jest.fn(), save: jest.fn(), internal: { pageSize: { getWidth: () => 0 } } }) }))
+const { config } = require('@vue/test-utils')
+
+config.global.stubs = {
+  RouterLink: true,
+  RouterView: true,
+}

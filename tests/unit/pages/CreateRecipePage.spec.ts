@@ -28,8 +28,8 @@ describe('CreateRecipePage.vue', () => {
   it('exibe o título e renderiza os componentes filhos', () => {
     const wrapper = mount(CreateRecipePage, {
       global: {
-        stubs: { AppHeader: true, RecipeForm: true }
-      }
+        stubs: { AppHeader: true, RecipeForm: true },
+      },
     })
 
     expect(wrapper.find('h2.create-page__title').text()).toBe('Criar Receita')
@@ -39,7 +39,7 @@ describe('CreateRecipePage.vue', () => {
 
   it('ao submeter o formulário, chama api.post e navega para /receitas', async () => {
     const wrapper = mount(CreateRecipePage, {
-      global: { stubs: { AppHeader: true } }
+      global: { stubs: { AppHeader: true } },
     })
 
     const sampleData = {

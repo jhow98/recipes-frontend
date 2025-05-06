@@ -1,9 +1,7 @@
 import { useCategories } from '@/composables/useCategories'
-import api from '@/services/api'
-import { nextTick } from 'vue'
 
 jest.mock('@/services/api', () => ({
-  get: jest.fn()
+  get: jest.fn(),
 }))
 
 const mockApiGet = require('@/services/api').get as jest.Mock
@@ -25,7 +23,7 @@ describe('useCategories', () => {
     it('deve carregar categorias com sucesso', async () => {
       const mockCategories = [
         { id: 1, name: 'Categoria 1' },
-        { id: 2, name: 'Categoria 2' }
+        { id: 2, name: 'Categoria 2' },
       ]
       mockApiGet.mockResolvedValue({ data: mockCategories })
 
@@ -45,7 +43,9 @@ describe('useCategories', () => {
       await reload()
 
       expect(loading.value).toBe(false)
-      expect(error.value).toBe('Erro ao buscar categorias, aguarde alguns minutos e recarregue a página')
+      expect(error.value).toBe(
+        'Erro ao buscar categorias, aguarde alguns minutos e recarregue a página'
+      )
     })
   })
 

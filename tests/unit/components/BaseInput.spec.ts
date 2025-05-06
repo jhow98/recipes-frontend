@@ -10,8 +10,8 @@ describe('BaseInput.vue', () => {
         type: 'text',
         modelValue: 'valor inicial',
         placeholder: 'digite algo',
-        ...props
-      }
+        ...props,
+      },
     })
   }
 

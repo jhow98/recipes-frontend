@@ -4,11 +4,11 @@ import { useAuthStore } from '@/store/auth'
 
 jest.mock('vue-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
-  useRoute: () => ({ path: '/register' })
+  useRoute: () => ({ path: '/register' }),
 }))
 
 jest.mock('@/store/auth', () => ({
-  useAuthStore: jest.fn()
+  useAuthStore: jest.fn(),
 }))
 
 const mockedUseAuthStore = useAuthStore as unknown as jest.Mock
@@ -23,7 +23,7 @@ describe('AppHeader.vue', () => {
 
   it('mostra Login e link Cadastrar quando deslogado', () => {
     const wrapper = mount(AppHeader, {
-      global: { stubs: { RouterLink: RouterLinkStub } }
+      global: { stubs: { RouterLink: RouterLinkStub } },
     })
     expect(wrapper.find('button').text()).toBe('Login')
     const links = wrapper.findAllComponents(RouterLinkStub)
@@ -33,7 +33,7 @@ describe('AppHeader.vue', () => {
 
   it('clica em Login chama router.push', async () => {
     const wrapper = mount(AppHeader, {
-      global: { stubs: { RouterLink: RouterLinkStub } }
+      global: { stubs: { RouterLink: RouterLinkStub } },
     })
     await wrapper.find('button').trigger('click')
   })
@@ -41,7 +41,7 @@ describe('AppHeader.vue', () => {
   it('mostra links privados e Logout quando logado', () => {
     mockedUseAuthStore.mockReturnValue({ isLoggedIn: true, logout: logoutMock })
     const wrapper = mount(AppHeader, {
-      global: { stubs: { RouterLink: RouterLinkStub } }
+      global: { stubs: { RouterLink: RouterLinkStub } },
     })
     const links = wrapper.findAllComponents(RouterLinkStub).map(c => c.props('to'))
     expect(links).toEqual(['/register', '/receitas', '/receitas/criar'])
@@ -50,7 +50,7 @@ describe('AppHeader.vue', () => {
 
   it('aplica classe ativa no link correto', () => {
     const wrapper = mount(AppHeader, {
-      global: { stubs: { RouterLink: RouterLinkStub } }
+      global: { stubs: { RouterLink: RouterLinkStub } },
     })
     const active = wrapper.find('.header__nav-link--active')
     expect(active.exists()).toBe(true)

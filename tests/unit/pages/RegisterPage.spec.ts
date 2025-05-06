@@ -12,6 +12,7 @@ import BaseButton from '@/components/BaseButton.vue'
 import api from '@/services/api'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { nextTick } from 'vue'
 
 jest.mock('@/services/api')
 
@@ -86,7 +87,7 @@ describe('RegisterPage.vue', () => {
   })
 
   it('sucesso no cadastro e redireciona após 1s', async () => {
-    (api.post as jest.Mock).mockResolvedValue({})
+    ;(api.post as jest.Mock).mockResolvedValue({})
     const wrapper = mount(RegisterPage, {
       global: {
         stubs: { AppHeader: true },
@@ -96,14 +97,26 @@ describe('RegisterPage.vue', () => {
     await wrapper.find('input#login').setValue('user')
     await wrapper.find('input#password').setValue('123456')
     await wrapper.find('input#name').setValue('John Doe')
+
+    // Dispara o submit
     await wrapper.find('form').trigger('submit.prevent')
-    expect(wrapper.find('.register-page__loading').exists()).toBe(true)
+
+    // Espera todas as promessas pendentes serem resolvidas (incluindo api.post)
     await flushPromises()
-    expect(wrapper.find('.register-page__success').text()).toBe(
-      'Usuário cadastrado com sucesso!'
-    )
+
+    // Verifica o estado final de sucesso
+    expect(api.post).toHaveBeenCalledWith('/users', {
+      // Opcional: verifica se a API foi chamada corretamente
+      login: 'user',
+      password: '123456',
+      name: 'John Doe',
+    })
+    expect(wrapper.find('.register-page__loading').exists()).toBe(false) // Verifica se loading sumiu
+    expect(wrapper.find('.register-page__success').text()).toBe('Usuário cadastrado com sucesso!')
+
+    // Avança o timer para o setTimeout
     jest.advanceTimersByTime(1000)
-    expect(pushMock).toHaveBeenCalledWith('/login')
+    expect(pushMock).toHaveBeenCalledWith('/login') // Verifica o redirecionamento
   })
 
   it.each([

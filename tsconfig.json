@@ -9,11 +9,17 @@
     "moduleResolution": "node",
     "skipLibCheck": true,
     "strict": true,
-    "types": ["cypress", "webpack-env"],
+    "types": [
+      "jest",
+      "cypress",
+      "node"
+    ],
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "src/*"
+      ]
     }
   },
   "include": [
