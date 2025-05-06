@@ -2,7 +2,7 @@ FROM node:16-alpine as build-stage
 WORKDIR /app
 COPY package*.json ./
 COPY .env .
-RUN npm install
+RUN npm install --legacy-peer-deps
 COPY . .
 RUN npm run build
 
