@@ -1,3 +1,4 @@
+/// <reference types="cypress" />
 describe('Fluxo de Login', () => {
   beforeEach(() => {
     cy.visit('/login')

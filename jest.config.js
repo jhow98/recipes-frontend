@@ -15,8 +15,11 @@ module.exports = {
     '\\.(png|jpe?g|gif|svg)$': '<rootDir>/tests/__mocks__/fileMock.js',
   },
 
-  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/src/cypress/'],
-
+  testPathIgnorePatterns: [
+    '<rootDir>/node_modules/',
+    '<rootDir>/src/cypress/',
+    '<rootDir>/cypress/',
+  ],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   transformIgnorePatterns: ['/node_modules/(?!(axios)/)'],
   testMatch: ['**/tests/unit/**/*.spec.(js|jsx|ts|tsx)', '**/__tests__/*.(js|jsx|ts|tsx)'],

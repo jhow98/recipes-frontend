@@ -29,8 +29,9 @@
     "src/**/*.vue"
   ],
   "exclude": [
-    "node_modules",
-    "cypress.config.ts",
-    "cypress/"
+       "node_modules",
+       "cypress.config.ts",
+       "cypress/",
+       "src/cypress/"
   ]
 }

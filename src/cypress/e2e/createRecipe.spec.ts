@@ -1,3 +1,4 @@
+/// <reference types="cypress" />
 describe('Fluxo Essencial completo: Login -> Criação -> Exclusão de Receita via UI', () => {
   let authToken: string
   const uniqueRecipeName = `Minha Receita de Teste ${Date.now()}`
@@ -18,7 +19,6 @@ describe('Fluxo Essencial completo: Login -> Criação -> Exclusão de Receita v
   })
 
   it('permite criar e excluir uma receita com sucesso', () => {
-    // Intercepta chamadas para garantir que o token está sendo enviado
     cy.intercept('POST', '/recipes', req => {
       expect(req.headers['authorization']).to.equal(`Bearer ${authToken}`)
     }).as('createRecipe')
@@ -31,7 +31,6 @@ describe('Fluxo Essencial completo: Login -> Criação -> Exclusão de Receita v
       expect(req.headers['authorization']).to.equal(`Bearer ${authToken}`)
     }).as('deleteRecipe')
 
-    // 1. Criação da receita
     cy.visit('/receitas/criar')
 
     cy.get('#name').type(uniqueRecipeName)
@@ -42,12 +41,10 @@ describe('Fluxo Essencial completo: Login -> Criação -> Exclusão de Receita v
     cy.get('.recipe-form__select-input').select('Jantar')
     cy.get('.recipe-form__button').click()
 
-    // 2. Verifica criação e navega para lista
     cy.wait('@createRecipe').its('response.statusCode').should('eq', 201)
     cy.visit('/receitas')
     cy.wait('@getRecipes').its('response.statusCode').should('eq', 200)
 
-    // 3. Localiza e exclui a receita
     cy.contains('tr', uniqueRecipeName).within(() => {
       cy.get('button[title="Excluir"]').click()
     })
@@ -55,7 +52,6 @@ describe('Fluxo Essencial completo: Login -> Criação -> Exclusão de Receita v
     cy.get('.confirm-modal__button--confirm').click()
     cy.wait('@deleteRecipe').its('response.statusCode').should('eq', 204)
 
-    // 4. Verifica exclusão
     cy.contains('tr', uniqueRecipeName).should('not.exist')
   })
 })

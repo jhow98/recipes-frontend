@@ -6,7 +6,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
+    "test:unit": "jest --clearCache && jest --silent",
     "test:e2e": "cypress run",
     "lint": "vue-cli-service lint",
     "lint:fix": "vue-cli-service lint --fix",
